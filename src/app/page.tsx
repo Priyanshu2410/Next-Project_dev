@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import toast from 'react-hot-toast'
+import Link from 'next/link';
 
 type Post = {
   id: number;
@@ -41,6 +42,18 @@ export default function HomePage() {
     } catch (err) {
       console.error(err)
       toast.error('Failed to delete post')
+    }
+  };
+
+  const copyToClipboard = async (id: number) => {
+    try {
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/post/${id}`
+      );
+      toast.success('Link copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy link');
+      console.error('Copy failed:', err);
     }
   };
 
@@ -111,14 +124,13 @@ export default function HomePage() {
       {posts.length === 0 ? (
         <p className="text-gray-500">No posts yet.</p>
       ) : (
-        <ul className="space-y-4">
+        <div className="space-y-4">
           {posts.map((post) => (
-            <li key={post.id} className="border p-4 rounded shadow">
-              <h3 className="text-lg font-bold">{post.title}</h3>
-              <p className="text-sm text-gray-600">{post.content}</p>
-              <p className="text-xs text-gray-400 mt-2">
-                Created at: {new Date(post.createdAt).toLocaleString()}
-              </p>
+            <div key={post.id} className="mb-4 border p-4 rounded shadow">
+              <h2 className="text-xl font-bold">
+                <Link href={`/post/${post.id}`}>{post.title}</Link>
+              </h2>
+              <p>{post.content ? `${post.content.slice(0, 100)}...` : 'No content'}</p>
               <div className="flex gap-2 mt-2">
                 <button
                   onClick={() => handleEdit(post)}
@@ -132,10 +144,16 @@ export default function HomePage() {
                 >
                   Delete
                 </button>
+                <button
+                  onClick={() => copyToClipboard(post.id)}
+                  className="text-gray-600 hover:underline"
+                >
+                  Copy URL
+                </button>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </main>
   );
