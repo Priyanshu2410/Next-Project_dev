@@ -1,8 +1,7 @@
-"use client";
+'use client'
 
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { use } from 'react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
@@ -13,16 +12,17 @@ type Post = {
   createdAt: string;
 };
 
-export default function PostPage({ params }: { params: { id: string } }) {
-  // Unwrap params with React.use() to fix the warning
-  const { id } = params;
-  const postId = id;
-  
+export default function PostPage() {
+  const params = useParams(); // ✅ Extract params from useParams
+  const postId = params?.id as string;
+
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!postId) return;
+
     async function fetchPost() {
       try {
         const res = await fetch(`/api/posts/${postId}`);
@@ -50,9 +50,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/post/${post.id}`
-      );
+      await navigator.clipboard.writeText(`${window.location.origin}/post/${post.id}`);
       toast.success('Link copied to clipboard!');
     } catch (err) {
       toast.error('Failed to copy link');
