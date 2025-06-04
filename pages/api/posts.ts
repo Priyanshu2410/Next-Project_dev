@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       return res.status(201).json(post);
-    } catch (_) {
+    } catch {
       return res.status(500).json({ error: "Error creating post" });
     }
   }

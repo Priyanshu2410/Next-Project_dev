@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export default withAuth(
-  function middleware(_req: NextRequest) {
+  function middleware() {
     return NextResponse.next();
   },
   {
