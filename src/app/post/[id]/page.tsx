@@ -10,10 +10,14 @@ type Post = {
   title: string;
   content: string | null;
   createdAt: string;
+  user?: {
+    name?: string | null;
+    email?: string;
+  };
 };
 
 export default function PostPage() {
-  const params = useParams(); // ✅ Extract params from useParams
+  const params = useParams();
   const postId = params?.id as string;
 
   const [post, setPost] = useState<Post | null>(null);
@@ -59,22 +63,24 @@ export default function PostPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded shadow-md mt-10">
       <div className="mb-4">
         <Link href="/" className="text-blue-600 hover:underline">← Back to posts</Link>
       </div>
-      
-      <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
-      <p className="text-gray-700 mb-6">{post.content}</p>
-      <p className="text-xs text-gray-400 mb-4">
-        Created at: {new Date(post.createdAt).toLocaleString()}
-      </p>
+
+      <h1 className="text-4xl font-extrabold mb-4 text-gray-800">{post.title}</h1>
+      <p className="text-gray-700 text-lg mb-6 whitespace-pre-wrap">{post.content}</p>
+
+      <div className="mb-4 text-sm text-gray-600">
+        <p>📅 Created at: <span className="text-gray-800">{new Date(post.createdAt).toLocaleString()}</span></p>
+        <p>👤 Created by: <span className="text-gray-800">{post.user?.name || "Unnamed"}</span> ({post.user?.email || "No email"})</p>
+      </div>
 
       <button
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
         onClick={copyToClipboard}
       >
-        Copy Post URL
+        📋 Copy Post URL
       </button>
     </div>
   );
